@@ -11,18 +11,20 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth, useProfile } from '@/hooks/useSupabase';
 import { supabase } from '@/lib/supabase';
+import { useLanguage } from '@/context/LanguageContext';
 import { Colors, Spacing, BorderRadius, FontSizes, Shadows } from '@/constants/theme';
 import * as Haptics from 'expo-haptics';
 
 export default function ProfileScreen() {
   const { session, signOut } = useAuth();
   const { profile, partner, refetch } = useProfile(session?.user?.id);
+  const { t, language, setLanguage } = useLanguage();
   const [partnerEmail, setPartnerEmail] = useState('');
   const [linking, setLinking] = useState(false);
 
   const handleLinkPartner = async () => {
     if (!partnerEmail.trim()) {
-      Alert.alert('Oops', 'Introduce el email de tu pareja');
+      Alert.alert('Error', "Please enter your partner's email");
       return;
     }
 
@@ -41,8 +43,8 @@ export default function ProfileScreen() {
         // Fallback: try to find directly if RPC doesn't exist
         // For hardcoded approach, we'll update partner_id directly
         Alert.alert(
-          'Vinculación manual',
-          'Pídele a tu pareja que te dé su ID de usuario desde su perfil. Luego vincúlalo aquí.',
+          'Manual link',
+          'Ask your partner for their user ID from their profile. Then link it here.',
         );
         setLinking(false);
         return;
@@ -59,11 +61,11 @@ export default function ProfileScreen() {
         .update({ partner_id: session?.user?.id })
         .eq('id', partnerProfile.id);
 
-      Alert.alert('¡Vinculados! 💕', `Ahora estás conectad@ con ${partnerProfile.display_name}`);
+      Alert.alert('Linked', `You are now connected with ${partnerProfile.display_name}`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       refetch();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo vincular');
+      Alert.alert('Error', error.message || 'Could not link');
     } finally {
       setLinking(false);
     }
@@ -91,21 +93,21 @@ export default function ProfileScreen() {
 
       if (error2) throw error2;
 
-      Alert.alert('¡Vinculados! 💕', 'Ahora estáis conectados');
+      Alert.alert('Linked', 'You are now connected');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       refetch();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo vincular');
+      Alert.alert('Error', error.message || 'Could not link');
     } finally {
       setLinking(false);
     }
   };
 
   const handleSignOut = () => {
-    Alert.alert('Cerrar sesión', '¿Seguro?', [
-      { text: 'No', style: 'cancel' },
+    Alert.alert(t('sign_out'), 'Are you sure?', [
+      { text: t('no'), style: 'cancel' },
       {
-        text: 'Sí',
+        text: t('yes'),
         style: 'destructive',
         onPress: signOut,
       },
@@ -119,7 +121,32 @@ export default function ProfileScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>👤 Perfil</Text>
+        <Text style={styles.title}>{t('profile_title')}</Text>
+      </View>
+
+      {/* Language Selector */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('language')}</Text>
+        <View style={styles.languageContainer}>
+          <TouchableOpacity
+            style={[styles.languageButton, language === 'en' && styles.languageButtonActive]}
+            onPress={() => setLanguage('en')}
+          >
+            <Text style={[styles.languageText, language === 'en' && styles.languageTextActive]}>English</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.languageButton, language === 'es' && styles.languageButtonActive]}
+            onPress={() => setLanguage('es')}
+          >
+            <Text style={[styles.languageText, language === 'es' && styles.languageTextActive]}>Español</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.languageButton, language === 'fi' && styles.languageButtonActive]}
+            onPress={() => setLanguage('fi')}
+          >
+            <Text style={[styles.languageText, language === 'fi' && styles.languageTextActive]}>Suomi</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Profile Card */}
@@ -135,14 +162,14 @@ export default function ProfileScreen() {
           </LinearGradient>
         </View>
         <Text style={styles.displayName}>
-          {profile?.display_name || 'Sin nombre'}
+          {profile?.display_name || 'No name'}
         </Text>
         <Text style={styles.email}>{session?.user?.email}</Text>
       </View>
 
       {/* Partner Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>💕 Tu pareja</Text>
+        <Text style={styles.sectionTitle}>{t('your_partner')}</Text>
         {partner ? (
           <View style={styles.partnerCard}>
             <LinearGradient
@@ -155,21 +182,20 @@ export default function ProfileScreen() {
             </LinearGradient>
             <View style={styles.partnerInfo}>
               <Text style={styles.partnerName}>{partner.display_name}</Text>
-              <Text style={styles.partnerStatus}>Vinculad@ 💕</Text>
+              <Text style={styles.partnerStatus}>{t('linked')}</Text>
             </View>
             <View style={[styles.onlineDot, { backgroundColor: Colors.online }]} />
           </View>
         ) : (
           <View style={styles.linkSection}>
             <Text style={styles.linkDescription}>
-              Introduce el ID de usuario de tu pareja para vincularos.
-              Tu pareja puede encontrar su ID abajo.
+              {t('enter_partner_id')}
             </Text>
             <TextInput
               style={styles.linkInput}
               value={partnerEmail}
               onChangeText={setPartnerEmail}
-              placeholder="ID de tu pareja (uuid)"
+              placeholder={t('partner_id_placeholder')}
               placeholderTextColor={Colors.textMuted}
               autoCapitalize="none"
             />
@@ -185,7 +211,7 @@ export default function ProfileScreen() {
                 style={styles.linkButton}
               >
                 <Text style={styles.linkButtonText}>
-                  {linking ? 'Vinculando...' : 'Vincular 💕'}
+                  {linking ? t('linking') : t('link')}
                 </Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -195,19 +221,19 @@ export default function ProfileScreen() {
 
       {/* User ID (for sharing) */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🔑 Tu ID de usuario</Text>
+        <Text style={styles.sectionTitle}>{t('your_user_id')}</Text>
         <TouchableOpacity
           style={styles.idCard}
           onPress={() => {
             // Copy to clipboard would go here
-            Alert.alert('ID copiado', session?.user?.id || '');
+            Alert.alert(t('id_copied'), session?.user?.id || '');
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           }}
         >
           <Text style={styles.idText} numberOfLines={1}>
             {session?.user?.id}
           </Text>
-          <Text style={styles.idHint}>Toca para copiar</Text>
+          <Text style={styles.idHint}>{t('tap_to_copy')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -216,10 +242,10 @@ export default function ProfileScreen() {
         onPress={handleSignOut}
         style={styles.signOutButton}
       >
-        <Text style={styles.signOutText}>Cerrar sesión</Text>
+        <Text style={styles.signOutText}>{t('sign_out')}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.version}>Scrible v1.0.0 💕</Text>
+      <Text style={styles.version}>Scrible v1.0.0</Text>
     </ScrollView>
   );
 }
@@ -400,5 +426,32 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.xs,
     color: Colors.textMuted,
     textAlign: 'center',
+  },
+  languageContainer: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  languageButton: {
+    flex: 1,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.glassBorder,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+  },
+  languageButtonActive: {
+    borderColor: Colors.primary,
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
+  },
+  languageText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: FontSizes.sm,
+    color: Colors.textSecondary,
+  },
+  languageTextActive: {
+    color: Colors.primary,
+    fontFamily: 'Poppins_700Bold',
   },
 });

@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { useAuth, useProfile, useMessages } from '@/hooks/useSupabase';
+import { useLanguage } from '@/context/LanguageContext';
 import { Colors, Spacing, BorderRadius, FontSizes, Shadows } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -20,6 +21,7 @@ export default function HomeScreen() {
   const { session } = useAuth();
   const { profile, partner } = useProfile(session?.user?.id);
   const { messages } = useMessages(session?.user?.id, partner?.id);
+  const { t } = useLanguage();
   const router = useRouter();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -62,23 +64,22 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.greeting}>
-              Hola, {profile?.display_name || 'cariño'} 💕
+              {t('hello')}, {profile?.display_name || t('there')}
             </Text>
             <Text style={styles.subGreeting}>
               {partner
-                ? `Conectad@ con ${partner.display_name}`
-                : 'Vincula tu pareja en el perfil'}
+                ? `${t('connected_with')} ${partner.display_name}`
+                : t('link_your_partner_home')}
             </Text>
           </View>
           {partner && (
             <View style={styles.onlineContainer}>
               <View style={[styles.onlineDot, { backgroundColor: Colors.online }]} />
-              <Text style={styles.onlineText}>Online</Text>
+              <Text style={styles.onlineText}>{t('online')}</Text>
             </View>
           )}
         </View>
 
-        {/* Last Drawing Card */}
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={() => router.push('/(tabs)/canvas')}
@@ -88,7 +89,7 @@ export default function HomeScreen() {
             style={styles.card}
           >
             <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>✏️ Último dibujo</Text>
+              <Text style={styles.cardTitle}>{t('latest_drawing')}</Text>
               {lastDrawing && (
                 <Text style={styles.cardTime}>
                   {new Date(lastDrawing.created_at).toLocaleTimeString('es', {
@@ -106,11 +107,10 @@ export default function HomeScreen() {
               />
             ) : (
               <View style={styles.emptyDrawing}>
-                <Text style={styles.emptyEmoji}>🎨</Text>
                 <Text style={styles.emptyText}>
                   {partner
-                    ? `¡Envía un dibujo a ${partner.display_name}!`
-                    : '¡Haz tu primer dibujo!'}
+                    ? `${t('send_a_drawing_to')} ${partner.display_name}`
+                    : t('make_first_drawing')}
                 </Text>
               </View>
             )}
@@ -127,10 +127,8 @@ export default function HomeScreen() {
             <LinearGradient
               colors={[Colors.primary, Colors.primaryDark]}
               style={styles.quickActionGradient}
-            >
-              <Text style={styles.quickActionEmoji}>✏️</Text>
-            </LinearGradient>
-            <Text style={styles.quickActionLabel}>Dibujar</Text>
+            />
+            <Text style={styles.quickActionLabel}>{t('draw_tab')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -142,14 +140,13 @@ export default function HomeScreen() {
               colors={[Colors.secondary, Colors.secondaryDark]}
               style={styles.quickActionGradient}
             >
-              <Text style={styles.quickActionEmoji}>💬</Text>
               {unseenCount > 0 && (
                 <View style={styles.badge}>
                   <Text style={styles.badgeText}>{unseenCount}</Text>
                 </View>
               )}
             </LinearGradient>
-            <Text style={styles.quickActionLabel}>Chat</Text>
+            <Text style={styles.quickActionLabel}>{t('chat_tab')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -160,10 +157,8 @@ export default function HomeScreen() {
             <LinearGradient
               colors={[Colors.accent, Colors.accentDark]}
               style={styles.quickActionGradient}
-            >
-              <Text style={styles.quickActionEmoji}>😍</Text>
-            </LinearGradient>
-            <Text style={styles.quickActionLabel}>Stickers</Text>
+            />
+            <Text style={styles.quickActionLabel}>{t('stickers_tab')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -174,10 +169,8 @@ export default function HomeScreen() {
             <LinearGradient
               colors={['#60A5FA', '#3B82F6']}
               style={styles.quickActionGradient}
-            >
-              <Text style={styles.quickActionEmoji}>📸</Text>
-            </LinearGradient>
-            <Text style={styles.quickActionLabel}>Foto</Text>
+            />
+            <Text style={styles.quickActionLabel}>{t('photo_tab')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -190,10 +183,10 @@ export default function HomeScreen() {
             <View style={styles.messageCard}>
               <View style={styles.messageCardHeader}>
                 <Text style={styles.cardTitle}>
-                  💌 De {partner?.display_name || 'tu pareja'}
+                  {t('from_partner')} {partner?.display_name || t('partner_fallback')}
                 </Text>
                 <Text style={styles.cardTime}>
-                  {new Date(lastMessage.created_at).toLocaleTimeString('es', {
+                  {new Date(lastMessage.created_at).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}
@@ -203,10 +196,10 @@ export default function HomeScreen() {
                 {lastMessage.type === 'text'
                   ? lastMessage.content
                   : lastMessage.type === 'drawing'
-                  ? '🎨 Te envió un dibujo'
+                  ? t('sent_a_drawing')
                   : lastMessage.type === 'photo'
-                  ? '📸 Te envió una foto'
-                  : '😍 Te envió un sticker'}
+                  ? t('sent_a_photo')
+                  : t('sent_a_sticker')}
               </Text>
             </View>
           </TouchableOpacity>

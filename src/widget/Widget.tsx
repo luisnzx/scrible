@@ -19,7 +19,7 @@ export function ScribleWidget({
       style={{
         height: 'match_parent',
         width: 'match_parent',
-        backgroundColor: '#1A1A2E',
+        backgroundColor: '#1E293B',
         borderRadius: 16,
         padding: 16,
         justifyContent: 'space-between',
@@ -35,11 +35,7 @@ export function ScribleWidget({
         }}
       >
         <TextWidget
-          text="💕 "
-          style={{ fontSize: 16, color: '#FFFFFF' }}
-        />
-        <TextWidget
-          text={partnerName ? `De ${partnerName}` : 'Scrible'}
+          text={partnerName ? `From ${partnerName}` : 'Scrible'}
           style={{
             fontSize: 14,
             fontFamily: 'sans-serif-medium',
@@ -54,15 +50,15 @@ export function ScribleWidget({
           flex: 1,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: '#0F0F1A',
+          backgroundColor: '#0F172A',
           borderRadius: 12,
           overflow: 'hidden',
         }}
       >
         {!messageType ? (
           <TextWidget
-            text="Sin mensajes nuevos"
-            style={{ fontSize: 14, color: '#6B6B8A' }}
+            text="No new messages"
+            style={{ fontSize: 14, color: '#64748B' }}
           />
         ) : messageType === 'text' ? (
           <TextWidget
@@ -75,12 +71,12 @@ export function ScribleWidget({
           />
         ) : messageType === 'sticker' ? (
           <TextWidget
-            text={content || '😍'}
+            text={content || 'Sticker'}
             style={{ fontSize: 48 }}
           />
         ) : (messageType === 'drawing' || messageType === 'photo') ? (
           <TextWidget
-            text={messageType === 'drawing' ? '🎨 Nuevo dibujo' : '📸 Nueva foto'}
+            text={messageType === 'drawing' ? 'New drawing' : 'New photo'}
             style={{ fontSize: 24, color: '#FFFFFF' }}
           />
         ) : null}

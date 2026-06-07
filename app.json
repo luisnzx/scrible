@@ -39,7 +39,21 @@
           }
         }
       ],
-      "react-native-android-widget"
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "ScribleWidget",
+              "label": "Scrible Widget",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "description": "See your partner's drawings",
+              "updatePeriodMillis": 900000
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

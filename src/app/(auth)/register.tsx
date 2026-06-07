@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/hooks/useSupabase';
+import { useLanguage } from '@/context/LanguageContext';
 import { Colors, Spacing, BorderRadius, FontSizes } from '@/constants/theme';
 
 export default function RegisterScreen() {
@@ -20,7 +21,9 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const { signUp } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -42,24 +45,30 @@ export default function RegisterScreen() {
   });
 
   const handleRegister = async () => {
+    setErrorMsg('');
     if (!displayName || !email || !password) {
-      Alert.alert('Oops', 'Rellena todos los campos 💕');
+      setErrorMsg(t('fill_all_fields'));
       return;
     }
     if (password.length < 6) {
-      Alert.alert('Oops', 'La contraseña debe tener al menos 6 caracteres');
+      setErrorMsg(t('password_length'));
       return;
     }
     setLoading(true);
     try {
       await signUp(email.trim(), password, displayName.trim());
-      Alert.alert(
-        '¡Bienvenid@! 🎉',
-        'Revisa tu email para confirmar tu cuenta',
-        [{ text: 'OK', onPress: () => router.back() }]
-      );
+        if (Platform.OS === 'web') {
+          window.alert(t('account_created'));
+          router.replace('/(auth)/login');
+        } else {
+          Alert.alert(
+            t('welcome'),
+            t('account_created'),
+            [{ text: t('ok'), onPress: () => router.replace('/(auth)/login') }]
+          );
+        }
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo crear la cuenta');
+      setErrorMsg(error.message || t('could_not_create_account'));
     } finally {
       setLoading(false);
     }
@@ -77,31 +86,36 @@ export default function RegisterScreen() {
         ]}
       >
         <View style={styles.header}>
-          <Text style={styles.emoji}>💌</Text>
-          <Text style={styles.title}>Únete</Text>
-          <Text style={styles.subtitle}>Crea tu cuenta para empezar</Text>
+          <Text style={styles.title}>{t('register_title')}</Text>
+          <Text style={styles.subtitle}>{t('register_subtitle')}</Text>
         </View>
+
+        {errorMsg ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMsg}</Text>
+          </View>
+        ) : null}
 
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Tu nombre</Text>
+            <Text style={styles.inputLabel}>{t('name')}</Text>
             <TextInput
               style={styles.input}
               value={displayName}
               onChangeText={setDisplayName}
-              placeholder="¿Cómo te llamas?"
+              placeholder={t('name_placeholder')}
               placeholderTextColor={Colors.textMuted}
               autoCapitalize="words"
             />
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>{t('email')}</Text>
             <TextInput
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="tu@email.com"
+              placeholder="you@example.com"
               placeholderTextColor={Colors.textMuted}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -110,12 +124,12 @@ export default function RegisterScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Contraseña</Text>
+            <Text style={styles.inputLabel}>{t('password')}</Text>
             <TextInput
               style={styles.input}
               value={password}
               onChangeText={setPassword}
-              placeholder="Mínimo 6 caracteres"
+              placeholder="••••••••"
               placeholderTextColor={Colors.textMuted}
               secureTextEntry
             />
@@ -133,7 +147,7 @@ export default function RegisterScreen() {
               style={styles.button}
             >
               <Text style={styles.buttonText}>
-                {loading ? 'Creando...' : 'Crear cuenta 🎉'}
+                {loading ? t('creating_account') : t('create_account')}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -144,8 +158,8 @@ export default function RegisterScreen() {
           style={styles.loginLink}
         >
           <Text style={styles.loginText}>
-            ¿Ya tienes cuenta?{' '}
-            <Text style={styles.loginTextBold}>Inicia sesión</Text>
+            {t('already_have_account')}{' '}
+            <Text style={styles.loginTextBold}>{t('sign_in')}</Text>
           </Text>
         </TouchableOpacity>
       </Animated.View>
@@ -181,6 +195,20 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
+  },
+  errorContainer: {
+    backgroundColor: 'rgba(255, 77, 106, 0.1)',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 77, 106, 0.3)',
+  },
+  errorText: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: FontSizes.sm,
+    color: Colors.error,
+    textAlign: 'center',
   },
   form: {
     gap: Spacing.md,

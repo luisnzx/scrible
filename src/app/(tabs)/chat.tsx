@@ -12,10 +12,12 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
+import { Feather } from '@expo/vector-icons';
 import { useAuth, useProfile, useMessages } from '@/hooks/useSupabase';
 import { supabase } from '@/lib/supabase';
 import { Colors, Spacing, BorderRadius, FontSizes, Shadows } from '@/constants/theme';
 import { Message } from '@/lib/supabase';
+import { useLanguage } from '@/context/LanguageContext';
 import * as Haptics from 'expo-haptics';
 
 // Sticker sets
@@ -33,6 +35,7 @@ export default function ChatScreen() {
     session?.user?.id,
     partner?.id
   );
+  const { t } = useLanguage();
 
   const [text, setText] = useState('');
   const [showStickers, setShowStickers] = useState(false);
@@ -58,7 +61,7 @@ export default function ChatScreen() {
   const handleSendText = async () => {
     if (!text.trim()) return;
     if (!partner) {
-      Alert.alert('Sin pareja', 'Vincula tu pareja primero');
+      Alert.alert('No partner', 'Link your partner first');
       return;
     }
     const content = text.trim();
@@ -76,7 +79,7 @@ export default function ChatScreen() {
 
   const handleSendPhoto = async () => {
     if (!partner) {
-      Alert.alert('Sin pareja', 'Vincula tu pareja primero');
+      Alert.alert('No partner', 'Link your partner first');
       return;
     }
 
@@ -113,7 +116,7 @@ export default function ChatScreen() {
       await sendMessage('photo', null, urlData.publicUrl);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo enviar la foto');
+      Alert.alert('Error', error.message || 'Could not send photo');
     } finally {
       setSending(false);
     }
@@ -121,7 +124,7 @@ export default function ChatScreen() {
 
   const renderMessage = ({ item }: { item: Message }) => {
     const isMe = item.sender_id === session?.user?.id;
-    const time = new Date(item.created_at).toLocaleTimeString('es', {
+    const time = new Date(item.created_at).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -174,7 +177,7 @@ export default function ChatScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>
-          💬 {partner?.display_name || 'Chat'}
+          {partner?.display_name || t('chat_title')}
         </Text>
         {partner && (
           <View style={styles.onlineIndicator}>
@@ -186,10 +189,10 @@ export default function ChatScreen() {
       {/* Messages */}
       {!partner ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>💌</Text>
-          <Text style={styles.emptyTitle}>Sin pareja vinculada</Text>
+          <Feather name="users" size={48} color={Colors.textMuted} style={{ marginBottom: Spacing.md }} />
+          <Text style={styles.emptyTitle}>{t('no_partner_linked')}</Text>
           <Text style={styles.emptyText}>
-            Ve a tu perfil para vincular a tu pareja
+            {t('go_to_profile')}
           </Text>
         </View>
       ) : (
@@ -202,10 +205,10 @@ export default function ChatScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Text style={styles.emptyEmoji}>💕</Text>
-              <Text style={styles.emptyTitle}>¡Empezad a hablar!</Text>
+              <Feather name="message-square" size={48} color={Colors.textMuted} style={{ marginBottom: Spacing.md }} />
+              <Text style={styles.emptyTitle}>{t('start_talking')}</Text>
               <Text style={styles.emptyText}>
-                Envía el primer mensaje a {partner.display_name}
+                {t('send_first_message')} {partner.display_name}
               </Text>
             </View>
           }
@@ -236,21 +239,21 @@ export default function ChatScreen() {
             onPress={handleSendPhoto}
             style={styles.inputAction}
           >
-            <Text style={styles.inputActionText}>📸</Text>
+            <Feather name="camera" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => setShowStickers(!showStickers)}
             style={styles.inputAction}
           >
-            <Text style={styles.inputActionText}>😍</Text>
+            <Feather name="smile" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
 
           <TextInput
             style={styles.textInput}
             value={text}
             onChangeText={setText}
-            placeholder="Escribe algo bonito..."
+            placeholder={t('type_message')}
             placeholderTextColor={Colors.textMuted}
             multiline
             maxLength={500}
@@ -265,7 +268,7 @@ export default function ChatScreen() {
               text.trim() && styles.sendButtonActive,
             ]}
           >
-            <Text style={styles.sendButtonText}>💕</Text>
+            <Feather name="send" size={18} color={text.trim() ? '#FFF' : Colors.textPrimary} />
           </TouchableOpacity>
         </View>
       )}

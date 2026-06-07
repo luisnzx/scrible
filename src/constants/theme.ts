@@ -1,52 +1,52 @@
 // Scrible Design System — Color Palette & Theme
 export const Colors = {
-  // Primary palette
-  primary: '#FF6B9D',
-  primaryLight: '#FF8FB8',
-  primaryDark: '#E04E80',
+  // Primary palette (Green/Emerald)
+  primary: '#10B981',
+  primaryLight: '#34D399',
+  primaryDark: '#059669',
 
-  // Secondary palette
-  secondary: '#C44BFF',
-  secondaryLight: '#D47FFF',
-  secondaryDark: '#9B2ED6',
+  // Secondary palette (Teal)
+  secondary: '#0D9488',
+  secondaryLight: '#14B8A6',
+  secondaryDark: '#0F766E',
 
   // Accent
-  accent: '#FFD166',
-  accentLight: '#FFE099',
-  accentDark: '#E6B84D',
+  accent: '#F59E0B',
+  accentLight: '#FBBF24',
+  accentDark: '#D97706',
 
   // Backgrounds
-  background: '#0F0F1A',
-  surface: '#1A1A2E',
-  surfaceLight: '#252540',
-  surfaceElevated: '#2D2D4A',
+  background: '#0F172A',
+  surface: '#1E293B',
+  surfaceLight: '#334155',
+  surfaceElevated: '#475569',
 
   // Text
-  textPrimary: '#FFFFFF',
-  textSecondary: '#B8B8D0',
-  textMuted: '#6B6B8A',
+  textPrimary: '#F8FAFC',
+  textSecondary: '#94A3B8',
+  textMuted: '#64748B',
 
   // Glassmorphism
-  glass: 'rgba(255, 255, 255, 0.06)',
-  glassBorder: 'rgba(255, 255, 255, 0.12)',
-  glassLight: 'rgba(255, 255, 255, 0.10)',
+  glass: 'rgba(255, 255, 255, 0.05)',
+  glassBorder: 'rgba(255, 255, 255, 0.10)',
+  glassLight: 'rgba(255, 255, 255, 0.08)',
 
   // Status
-  online: '#4ADE80',
-  offline: '#6B6B8A',
-  error: '#FF4D6A',
-  success: '#4ADE80',
+  online: '#22C55E',
+  offline: '#64748B',
+  error: '#EF4444',
+  success: '#22C55E',
 
   // Gradients (used as arrays for LinearGradient)
-  gradientPrimary: ['#FF6B9D', '#C44BFF'] as const,
-  gradientAccent: ['#FFD166', '#FF6B9D'] as const,
-  gradientDark: ['#1A1A2E', '#0F0F1A'] as const,
-  gradientSurface: ['#252540', '#1A1A2E'] as const,
+  gradientPrimary: ['#10B981', '#0D9488'] as const,
+  gradientAccent: ['#F59E0B', '#10B981'] as const,
+  gradientDark: ['#1E293B', '#0F172A'] as const,
+  gradientSurface: ['#334155', '#1E293B'] as const,
 
   // Drawing canvas colors
   canvasColors: [
-    '#FF6B9D', '#C44BFF', '#FFD166', '#4ADE80', '#60A5FA',
-    '#F472B6', '#FB923C', '#FFFFFF', '#A78BFA', '#34D399',
+    '#10B981', '#0D9488', '#F59E0B', '#22C55E', '#3B82F6',
+    '#EF4444', '#A855F7', '#F8FAFC', '#14B8A6', '#8B5CF6',
   ],
 } as const;
 

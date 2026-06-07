@@ -1,20 +1,42 @@
 // Supabase client configuration
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 // ⚠️ REPLACE THESE WITH YOUR SUPABASE PROJECT VALUES
-const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+const SUPABASE_URL = 'https://aghvxawppzjajmfajlnm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnaHZ4YXdwcHpqYWptZmFqbG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA4MjIwMzMsImV4cCI6MjA5NjM5ODAzM30.tRVeRhRpzacHwiijxvjv88xuvQGvt9WwzcrNc0amEts';
+
+const isWeb = Platform.OS === 'web';
 
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
+    if (isWeb) {
+      try {
+        return Promise.resolve(localStorage.getItem(key));
+      } catch (e) {
+        return Promise.resolve(null);
+      }
+    }
     return SecureStore.getItemAsync(key);
   },
   setItem: (key: string, value: string) => {
-    SecureStore.setItemAsync(key, value);
+    if (isWeb) {
+      try {
+        localStorage.setItem(key, value);
+      } catch (e) {}
+      return Promise.resolve();
+    }
+    return SecureStore.setItemAsync(key, value);
   },
   removeItem: (key: string) => {
-    SecureStore.deleteItemAsync(key);
+    if (isWeb) {
+      try {
+        localStorage.removeItem(key);
+      } catch (e) {}
+      return Promise.resolve();
+    }
+    return SecureStore.deleteItemAsync(key);
   },
 };
 

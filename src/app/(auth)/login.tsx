@@ -13,13 +13,16 @@ import {
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '@/hooks/useSupabase';
+import { useLanguage } from '@/context/LanguageContext';
 import { Colors, Spacing, BorderRadius, FontSizes } from '@/constants/theme';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const { signIn } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
 
   // Animations
@@ -42,15 +45,17 @@ export default function LoginScreen() {
   });
 
   const handleLogin = async () => {
+    setErrorMsg('');
     if (!email || !password) {
-      Alert.alert('Oops', 'Rellena todos los campos 💕');
+      setErrorMsg(t('fill_all_fields'));
       return;
     }
     setLoading(true);
     try {
       await signIn(email.trim(), password);
+      // Let the global auth guard in _layout.tsx handle the redirect!
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo iniciar sesión');
+      setErrorMsg(error.message || t('could_not_sign_in'));
     } finally {
       setLoading(false);
     }
@@ -69,20 +74,25 @@ export default function LoginScreen() {
       >
         {/* Logo & Title */}
         <View style={styles.header}>
-          <Text style={styles.emoji}>✏️💕</Text>
-          <Text style={styles.title}>Scrible</Text>
-          <Text style={styles.subtitle}>Dibuja, escribe, conecta</Text>
+          <Text style={styles.title}>{t('login_title')}</Text>
+          <Text style={styles.subtitle}>{t('login_subtitle')}</Text>
         </View>
+
+        {errorMsg ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{errorMsg}</Text>
+          </View>
+        ) : null}
 
         {/* Form */}
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
+            <Text style={styles.inputLabel}>{t('email')}</Text>
             <TextInput
               style={styles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="tu@email.com"
+              placeholder="you@example.com"
               placeholderTextColor={Colors.textMuted}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -91,7 +101,7 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Contraseña</Text>
+            <Text style={styles.inputLabel}>{t('password')}</Text>
             <TextInput
               style={styles.input}
               value={password}
@@ -114,7 +124,7 @@ export default function LoginScreen() {
               style={styles.button}
             >
               <Text style={styles.buttonText}>
-                {loading ? 'Entrando...' : 'Entrar 💕'}
+                {loading ? t('signing_in') : t('sign_in')}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -126,8 +136,8 @@ export default function LoginScreen() {
           style={styles.registerLink}
         >
           <Text style={styles.registerText}>
-            ¿No tienes cuenta?{' '}
-            <Text style={styles.registerTextBold}>Regístrate</Text>
+            {t('no_account')}{' '}
+            <Text style={styles.registerTextBold}>{t('sign_up')}</Text>
           </Text>
         </TouchableOpacity>
       </Animated.View>
@@ -164,6 +174,20 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.textSecondary,
     marginTop: Spacing.xs,
+  },
+  errorContainer: {
+    backgroundColor: 'rgba(255, 77, 106, 0.1)',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 77, 106, 0.3)',
+  },
+  errorText: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: FontSizes.sm,
+    color: Colors.error,
+    textAlign: 'center',
   },
   form: {
     gap: Spacing.md,
