@@ -32,7 +32,7 @@ export default function CanvasScreen() {
   const { sendMessage } = useMessages(session?.user?.id, partner?.id);
 
   const [paths, setPaths] = useState<StrokePath[]>([]);
-  const [currentColor, setCurrentColor] = useState(Colors.primary);
+  const [currentColor, setCurrentColor] = useState<string>(Colors.primary);
   const [currentStrokeWidth, setCurrentStrokeWidth] = useState(STROKE_WIDTHS[1]);
   const [isEraser, setIsEraser] = useState(false);
   const [sending, setSending] = useState(false);

@@ -1,56 +1,94 @@
-# Welcome to your Expo app 👋
+# 🎨 Scrible — App de pareja
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Dibuja, escribe, conecta. Una app para parejas donde podéis dibujar cosas, enviar mensajes, fotos y stickers que el otro puede ver.
 
-## Get started
+## 📱 Funcionalidades
 
-1. Install dependencies
+- ✏️ **Canvas de dibujo** — Dibuja con diferentes colores y grosores, envía tus dibujos
+- 💬 **Chat** — Mensajes de texto con tu pareja en tiempo real
+- 📸 **Fotos** — Envía fotos desde tu galería
+- 😍 **Stickers** — Stickers de amor y emojis prediseñados
+- 🔔 **Notificaciones Push** — Recibe notificaciones con preview de imagen
+- 🌙 **Diseño Dark Mode** — Diseño premium con glassmorphism y gradientes
 
-   ```bash
-   npm install
+## 🚀 Configuración
+
+### 1. Supabase Setup
+
+1. Ve a [supabase.com](https://supabase.com) y abre tu proyecto
+2. Ve a **SQL Editor** y pega el contenido de `supabase-setup.sql`
+3. Ejecuta el SQL para crear tablas, políticas y triggers
+4. Ve a **Settings > API** y copia:
+   - **Project URL** (ej: `https://xxxx.supabase.co`)
+   - **anon public key**
+5. Edita `src/lib/supabase.ts` y reemplaza:
+   ```typescript
+   const SUPABASE_URL = 'https://TU_PROYECTO.supabase.co';
+   const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
    ```
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 2. Configuración local
 
 ```bash
-npm run reset-project
+# Instalar dependencias
+npm install
+
+# Iniciar servidor de desarrollo
+npm start
+
+# Abrir en Android (con emulador o Expo Go)
+npm run android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 3. Vincular parejas
 
-### Other setup steps
+1. Ambos registráis vuestras cuentas en la app
+2. Cada uno va a **Perfil** y copia su **ID de usuario**
+3. Uno introduce el ID del otro en la sección "Tu pareja"
+4. ¡Vinculados! 💕
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### 4. Push Notifications (opcional)
 
-## Learn more
+Para notificaciones push necesitas:
+1. Crear un proyecto en [expo.dev](https://expo.dev)
+2. Instalar EAS CLI: `npm install -g eas-cli`
+3. Login: `eas login`
+4. Hacer un build de desarrollo: `eas build --profile development --platform android`
+5. Configurar el Database Webhook en Supabase Dashboard
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🏗️ Tecnologías
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- **Expo** (SDK 56) — Framework React Native
+- **React Native Skia** — Canvas de dibujo de alto rendimiento
+- **Supabase** — Auth, Database, Realtime, Storage
+- **Expo Router** — File-based routing
+- **Poppins** — Tipografía Google Fonts
+- **Reanimated** — Animaciones fluidas
 
-## Join the community
+## 📁 Estructura
 
-Join our community of developers creating universal apps.
+```
+src/
+├── app/
+│   ├── _layout.tsx          # Root layout
+│   ├── index.tsx            # Auth redirect
+│   ├── (auth)/
+│   │   ├── _layout.tsx      # Auth stack
+│   │   ├── login.tsx        # Login screen
+│   │   └── register.tsx     # Register screen
+│   └── (tabs)/
+│       ├── _layout.tsx      # Tab navigator
+│       ├── index.tsx        # Home dashboard
+│       ├── canvas.tsx       # Drawing canvas
+│       ├── chat.tsx         # Chat + stickers
+│       └── profile.tsx      # Profile + pair link
+├── lib/
+│   ├── supabase.ts          # Supabase client
+│   └── notifications.ts    # Push notifications
+├── hooks/
+│   └── useSupabase.ts       # Auth, profile, messages hooks
+└── constants/
+    └── theme.ts             # Design system
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 💕 Hecho con amor
