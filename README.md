@@ -1,17 +1,17 @@
-# 🎨 Scrible — App de pareja
+#  Scrible — 
 
 Dibuja, escribe, conecta. Una app para parejas donde podéis dibujar cosas, enviar mensajes, fotos y stickers que el otro puede ver.
 
-## 📱 Funcionalidades
+##  Funcionalidades
 
-- ✏️ **Canvas de dibujo** — Dibuja con diferentes colores y grosores, envía tus dibujos
-- 💬 **Chat** — Mensajes de texto con tu pareja en tiempo real
-- 📸 **Fotos** — Envía fotos desde tu galería
-- 😍 **Stickers** — Stickers de amor y emojis prediseñados
-- 🔔 **Notificaciones Push** — Recibe notificaciones con preview de imagen
-- 🌙 **Diseño Dark Mode** — Diseño premium con glassmorphism y gradientes
+-  **Canvas de dibujo** — Dibuja con diferentes colores y grosores, envía tus dibujos
+-  **Chat** — Mensajes de texto con tu pareja en tiempo real
+-  **Fotos** — Envía fotos desde tu galería
+-  **Stickers** — Stickers de amor y emojis prediseñados
+-  **Notificaciones Push** — Recibe notificaciones con preview de imagen
+-  **Diseño Dark Mode** — Diseño premium con glassmorphism y gradientes
 
-## 🚀 Configuración
+##  Configuración
 
 ### 1. Supabase Setup
 
@@ -45,7 +45,7 @@ npm run android
 1. Ambos registráis vuestras cuentas en la app
 2. Cada uno va a **Perfil** y copia su **ID de usuario**
 3. Uno introduce el ID del otro en la sección "Tu pareja"
-4. ¡Vinculados! 💕
+4. ¡Vinculados! 
 
 ### 4. Push Notifications (opcional)
 
@@ -56,7 +56,7 @@ Para notificaciones push necesitas:
 4. Hacer un build de desarrollo: `eas build --profile development --platform android`
 5. Configurar el Database Webhook en Supabase Dashboard
 
-## 🏗️ Tecnologías
+##  Tecnologías
 
 - **Expo** (SDK 56) — Framework React Native
 - **React Native Skia** — Canvas de dibujo de alto rendimiento
@@ -65,7 +65,7 @@ Para notificaciones push necesitas:
 - **Poppins** — Tipografía Google Fonts
 - **Reanimated** — Animaciones fluidas
 
-## 📁 Estructura
+##  Estructura
 
 ```
 src/
@@ -91,4 +91,4 @@ src/
     └── theme.ts             # Design system
 ```
 
-## 💕 Hecho con amor
+
